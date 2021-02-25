@@ -1,6 +1,7 @@
 (ns muuntaja.format.json
   (:refer-clojure :exclude [format])
   (:require [jsonista.core :as j]
+            [taoensso.tufte :as tufte]
             [muuntaja.format.core :as core])
   (:import (java.io InputStream
                     InputStreamReader
@@ -39,15 +40,17 @@
     (reify
       core/EncodeToBytes
       (encode-to-bytes [_ data charset]
-        (if (.equals "utf-8" ^String charset)
-          (j/write-value-as-bytes data mapper)
-          (.getBytes ^String (j/write-value-as-string data mapper) ^String charset)))
+        (tufte/p "muuntaja-encoder"
+                 (if (.equals "utf-8" ^String charset)
+                   (j/write-value-as-bytes data mapper)
+                   (.getBytes ^String (j/write-value-as-string data mapper) ^String charset))))
       core/EncodeToOutputStream
       (encode-to-output-stream [_ data charset]
         (fn [^OutputStream output-stream]
-          (if (.equals "utf-8" ^String charset)
-            (j/write-value output-stream data mapper)
-            (j/write-value (OutputStreamWriter. output-stream ^String charset) data mapper)))))))
+          (tufte/p "muuntaja-encoder"
+                   (if (.equals "utf-8" ^String charset)
+                     (j/write-value output-stream data mapper)
+                     (j/write-value (OutputStreamWriter. output-stream ^String charset) data mapper))))))))
 
 (def format
   (core/map->Format
