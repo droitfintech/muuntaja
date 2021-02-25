@@ -1,4 +1,4 @@
-(defproject metosin/muuntaja "0.6.7"
+(defproject metosin/muuntaja "0.6.8-SNAPSHOT"
   :description "Clojure library for format encoding, decoding and content-negotiation"
   :url "https://github.com/metosin/muuntaja"
   :license {:name "Eclipse Public License"
@@ -14,6 +14,7 @@
                          [metosin/jsonista "0.2.6"]
                          [com.cognitect/transit-clj "1.0.324"]
                          [cheshire "5.10.0"]
+                         [com.taoensso/tufte]
                          [clj-commons/clj-yaml "0.7.1"]
                          [clojure-msgpack "1.2.1" :exclusions [org.clojure/clojure]]]
   :dependencies []

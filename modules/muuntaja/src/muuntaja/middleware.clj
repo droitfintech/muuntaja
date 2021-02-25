@@ -1,5 +1,6 @@
 (ns muuntaja.middleware
-  (:require [muuntaja.core :as m]))
+  (:require [muuntaja.core :as m]
+            [taoensso.tufte :as tufte]))
 
 ; [^Exception e format request]
 (defn- default-on-exception [_ format _]
@@ -111,9 +112,9 @@
    (let [m (m/create prototype)]
      (fn
        ([request]
-        (handler (m/format-request m request)))
+        (handler (tufte/p "muuntaja/format-request" (m/format-request m request))))
        ([request respond raise]
-        (handler (m/format-request m request) respond raise))))))
+        (handler (tufte/p "muuntaja/format-request" (m/format-request m request)) respond raise))))))
 
 (defn wrap-format-response
   "Middleware that encodes also the response body with the attached
@@ -129,6 +130,8 @@
    (let [m (m/create prototype)]
      (fn
        ([request]
-        (some->> (handler request) (m/format-response m request)))
+        (let [rsp (handler request)]
+          (when rsp
+            (tufte/p "muuntaja/format-response" (m/format-response m request rsp)))))
        ([request respond raise]
-        (handler request #(respond (m/format-response m request %)) raise))))))
+        (handler request #(respond (tufte/p "muuntaja/format-response" (m/format-response m request %))) raise))))))
